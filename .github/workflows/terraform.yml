@@ -4,7 +4,7 @@ on:
     branches:
       - main
       - stage
-    paths:
+    paths:  
       - terraform/**
   pull_request:
     branches:
@@ -13,28 +13,31 @@ on:
       - terraform/**
 
 env:
-# Credentials for deployments to aws
-AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-# S3 bucket for terraform state
-BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE }}
-AWS_REGION: us-east-1
-EKS_CLUSTER: vprofile-eks
+ # Credentials for deployment to AWS
+ AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+ AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+ # S3 bucket for the Terraform state
+ BUCKET_TF_STATE: ${{ secrets.BUCKET_TF_STATE}}
+ AWS_REGION: us-east-1
+ EKS_CLUSTER: vprofile-eks
 
 jobs:
    terraform:
-     name: "apply terraform code changes"
+     name: "Apply terraform code changes"
      runs-on: ubuntu-latest
      defaults:
        run:
          shell: bash
          working-directory: ./terraform
+
      steps:
-       - name: Checkout source code
+       - name: Checkout source code 
          uses: actions/checkout@v4
 
-       - name: Setup terraform with specified version on the runner
+       - name: Setup Terraform with specified version on the runner
          uses: hashicorp/setup-terraform@v2
+         #with:
+         #  terraform_version: 1.6.3
 
        - name: Terraform init
          id: init
@@ -46,7 +49,7 @@ jobs:
 
        - name: Terraform validate
          id: validate
-         run: terraform validate   
+         run: terraform validate
 
        - name: Terraform plan
          id: plan
@@ -54,7 +57,7 @@ jobs:
          continue-on-error: true
 
        - name: Terraform plan status
-         if: steps.plan.outcome == 'failure'
-         run: exit 1 
+         if: steps.plan.outcome == 'failure' 
+         run: exit 1     
 
         
